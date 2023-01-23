@@ -1,6 +1,7 @@
 # Creating transactions with bitcoin-cli
 
-Some notes while taking the Bitcoin Programming course from Moralis Academy
+Some notes while taking the Bitcoin Programming course from Moralis Academy.
+The course is accessible here: 
 
 I ran all commands from the bitcoin-core folder installed with snap under Ubuntu: `/snap/bitcoin-core/current/bin`
 
@@ -24,7 +25,7 @@ $ ./bitcoin-cli -regtest listunspent
 ]
 ```
 
-Get a new address
+Get a new address:
 
 ```
 $ ./bitcoin-cli -regtest getnewaddress
@@ -53,7 +54,7 @@ $ ./bitcoin-cli -regtest listunspent
 ]
 ```
 
-UTXO list is still empty
+UTXO list is still empty.
 
 Generate 90 more bitcoins:
 
@@ -65,9 +66,9 @@ parallels@ubuntu-linux-22-04-desktop:/snap/bitcoin-core/current/bin$ ./bitcoin-c
 ]
 ```
 
-Still empty
+Still empty.
 
-The UTXO become spendable only after 100 blocks
+The UTXO become spendable only after 100 blocks:
 
 ```
 $ ./bitcoin-cli -regtest generatetoaddress 1 bcrt1qatq8u7swrd7vj6vdeswe92n4lzeweuyjaw0sfm
@@ -77,7 +78,7 @@ $ ./bitcoin-cli -regtest generatetoaddress 1 bcrt1qatq8u7swrd7vj6vdeswe92n4lzewe
 
 ```
 
-Now we have something:
+Now we have some spendable UTXO:
 
 ```
 $ ./bitcoin-cli -regtest listunspent
@@ -98,21 +99,45 @@ $ ./bitcoin-cli -regtest listunspent
 ]
 ```
 
-Generate a new address
+Generate a new address:
 
 ```
 $ ./bitcoin-cli -regtest getnewaddress
 bcrt1qdekulxrxszu6j08hlxrqu5yjzvexrttuxwm9vw
 ```
 
-Create the raw transaction
+From the following JSON...
+
+
+```
+'
+[
+    {
+        "txid": "c8e1ec9aa09e3786993c79af1413a68d32cca7e8d48ad26242a216ad98c9d255",
+        "vout": 0
+    }
+]
+'
+
+
+'
+{
+    "bcrt1qdekulxrxszu6j08hlxrqu5yjzvexrttuxwm9vw": 49
+}
+'
+```
+
+...removed all the carriage returns 
+`'[{"txid": "c8e1ec9aa09e3786993c79af1413a68d32cca7e8d48ad26242a216ad98c9d255","vout": 0}]' '{"bcrt1qdekulxrxszu6j08hlxrqu5yjzvexrttuxwm9vw": 49}'`
+
+...and create a raw transaction.
 
 ```
 ./bitcoin-cli -regtest createrawtransaction '[{"txid": "c8e1ec9aa09e3786993c79af1413a68d32cca7e8d48ad26242a216ad98c9d255","vout": 0}]' '{"bcrt1qdekulxrxszu6j08hlxrqu5yjzvexrttuxwm9vw": 49}'
 020000000155d2c998ad16a24262d28ad4e8a7cc328da61314af793c9986379ea09aece1c80000000000ffffffff0100111024010000001600146e6dcf986680b9a93cf7f9860e5092133261ad7c00000000
 ```
 
-Decode the transaction:
+Decode the transaction to confirm it worked:
 
 ```
 $ ./bitcoin-cli -regtest decoderawtransaction 020000000155d2c998ad16a24262d28ad4e8a7cc328da61314af793c9986379ea09aece1c80000000000ffffffff0100111024010000001600146e6dcf986680b9a93cf7f9860e5092133261ad7c00000000
