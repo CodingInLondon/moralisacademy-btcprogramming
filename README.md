@@ -237,3 +237,108 @@ $ ./bitcoin-cli -regtest decoderawtransaction 0200000000010155d2c998ad16a24262d2
 
 ```
 
+
+## Sending a transaction
+
+```
+$ ./bitcoin-cli -regtest sendrawtransaction 0200000000010155d2c998ad16a24262d28ad4e8a7cc328da61314af793c9986379ea09aece1c80000000000ffffffff0100111024010000001600146e6dcf986680b9a93cf7f9860e5092133261ad7c0247304402202a649fd5fd7c332ae9ca75d0b5b6c9f3bdc63a434cc8c569152a6c9fa10c7d6502204787d2e903d1988d757a42b4bfb9ef8314cfa6d971d9c5b3d97669932ee2d1940121036c59ef2016e0b39e018d7606f5a4020b64052855272618fade7c09772088ea7a00000000
+error code: -25
+error message:
+Fee exceeds maximum configured by user (e.g. -maxtxfee, maxfeerate)
+```
+
+1 BTC as fee is way too generous
+
+```
+$ ./bitcoin-cli -regtest getrawchangeaddress
+bcrt1qk6pnfsund3qtsczwr5ghqw75xqvvr3u4sx89mf
+```
+
+Create a new transaction that sends 0.9999 to this change address
+
+```
+$ ./bitcoin-cli -regtest createrawtransaction '[{"txid": "c8e1ec9aa09e3786993c79af1413a68d32cca7e8d48ad26242a216ad98c9d255","vout": 0}]' '{"bcrt1qdekulxrxszu6j08hlxrqu5yjzvexrttuxwm9vw": 49, "bcrt1qk6pnfsund3qtsczwr5ghqw75xqvvr3u4sx89mf": 0.9999}'
+020000000155d2c998ad16a24262d28ad4e8a7cc328da61314af793c9986379ea09aece1c80000000000ffffffff0200111024010000001600146e6dcf986680b9a93cf7f9860e5092133261ad7cf0b9f50500000000160014b68334c3936c40b8604e1d11703bd43018c1c79500000000
+```
+
+Sign the transaction
+
+
+```
+$ ./bitcoin-cli -regtest signrawtransactionwithwallet 020000000155d2c998ad16a24262d28ad4e8a7cc328da61314af793c9986379ea09aece1c80000000000ffffffff0200111024010000001600146e6dcf986680b9a93cf7f9860e5092133261ad7cf0b9f50500000000160014b68334c3936c40b8604e1d11703bd43018c1c79500000000
+{
+  "hex": "0200000000010155d2c998ad16a24262d28ad4e8a7cc328da61314af793c9986379ea09aece1c80000000000ffffffff0200111024010000001600146e6dcf986680b9a93cf7f9860e5092133261ad7cf0b9f50500000000160014b68334c3936c40b8604e1d11703bd43018c1c7950247304402203b20b61675ba2eed625767793a0b8a02a82ec793a37a19caca93c4674ddcd259022026f567443a7cffcb9656712931cc34717e8a104d450c260fcf41275e28d711d90121036c59ef2016e0b39e018d7606f5a4020b64052855272618fade7c09772088ea7a00000000",
+  "complete": true
+}
+```
+
+send the transaction
+
+```
+$ ./bitcoin-cli -regtest sendrawtransaction 0200000000010155d2c998ad16a24262d28ad4e8a7cc328da61314af793c9986379ea09aece1c80000000000ffffffff0200111024010000001600146e6dcf986680b9a93cf7f9860e5092133261ad7cf0b9f50500000000160014b68334c3936c40b8604e1d11703bd43018c1c7950247304402203b20b61675ba2eed625767793a0b8a02a82ec793a37a19caca93c4674ddcd259022026f567443a7cffcb9656712931cc34717e8a104d450c260fcf41275e28d711d90121036c59ef2016e0b39e018d7606f5a4020b64052855272618fade7c09772088ea7a00000000
+f080646bcf97904b059c3f95cdb16d76bb8bb03e029519a473d3a14a21f78ea6
+```
+
+
+Generate one block to confirm the transaction
+
+```
+$ ./bitcoin-cli -regtest -generate 1
+{
+  "address": "bcrt1q2cjveqtt0f6394acmmcyxzrkayepm2z94jjque",
+  "blocks": [
+    "2eeab756284facc53b2af319bdbe176fced36dc46abe39b25f8dcc66b6b44fbd"
+  ]
+}
+```
+
+
+Let's check the UTXO list
+
+```
+$ ./bitcoin-cli -regtest listunspent
+[
+  {
+    "txid": "4ec9a50149d52ab6d00a64a1fc1a9f4ddd69c6e337e9a3241c9bb6aa3f114e41",
+    "vout": 0,
+    "address": "bcrt1qatq8u7swrd7vj6vdeswe92n4lzeweuyjaw0sfm",
+    "label": "",
+    "scriptPubKey": "0014eac07e7a0e1b7cc9698dcc1d92aa75f8b2ecf092",
+    "amount": 50.00000000,
+    "confirmations": 101,
+    "spendable": true,
+    "solvable": true,
+    "desc": "wpkh([1de92c56/84'/1'/0'/0/0]036c59ef2016e0b39e018d7606f5a4020b64052855272618fade7c09772088ea7a)#t8g8qumy",
+    "safe": true
+  },
+  {
+    "txid": "f080646bcf97904b059c3f95cdb16d76bb8bb03e029519a473d3a14a21f78ea6",
+    "vout": 0,
+    "address": "bcrt1qdekulxrxszu6j08hlxrqu5yjzvexrttuxwm9vw",
+    "label": "",
+    "scriptPubKey": "00146e6dcf986680b9a93cf7f9860e5092133261ad7c",
+    "amount": 49.00000000,
+    "confirmations": 1,
+    "spendable": true,
+    "solvable": true,
+    "desc": "wpkh([1de92c56/84'/1'/0'/0/1]02368a7fe0204ecab9268fe5b20cdb94937bb9eb19ebf464275d7d2c814b75efcd)#rl96y3dl",
+    "safe": true
+  },
+  {
+    "txid": "f080646bcf97904b059c3f95cdb16d76bb8bb03e029519a473d3a14a21f78ea6",
+    "vout": 1,
+    "address": "bcrt1qk6pnfsund3qtsczwr5ghqw75xqvvr3u4sx89mf",
+    "scriptPubKey": "0014b68334c3936c40b8604e1d11703bd43018c1c795",
+    "amount": 0.99990000,
+    "confirmations": 1,
+    "spendable": true,
+    "solvable": true,
+    "desc": "wpkh([1de92c56/84'/1'/0'/1/0]03f562451a150b9c15a25db67df7a0b3d2a5393a356eadbbaec6ff7ba93be9a12f)#wggd4zmv",
+    "safe": true
+  }
+]
+```
+
+
+Why are those transactions still as UTXOs when we've just spent them? Because all those experiments were done within the same wallet.
+
