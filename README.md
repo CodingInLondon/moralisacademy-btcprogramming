@@ -3,8 +3,11 @@
 Some notes while taking the Bitcoin Programming course from Moralis Academy.
 The course is accessible here: 
 
+https://academy.moralis.io/lessons/introduction-36
+
 I ran all commands from the bitcoin-core folder installed with snap under Ubuntu: `/snap/bitcoin-core/current/bin`
 
+## Wallet init
 
 Create a wallet:
 
@@ -99,6 +102,9 @@ $ ./bitcoin-cli -regtest listunspent
 ]
 ```
 
+## Create a new transaction
+
+
 Generate a new address:
 
 ```
@@ -175,6 +181,9 @@ $ ./bitcoin-cli -regtest decoderawtransaction 020000000155d2c998ad16a24262d28ad4
   ]
 }
 ```
+
+## Signatures
+
 
 Add a signature to the transaction
 
