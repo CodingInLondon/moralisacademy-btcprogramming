@@ -30,6 +30,7 @@ found 0 vulnerabilities
 
 ```
 
+[address.js](project/address.js) and [transaction.js](project/transaction.js) are in the project folder.
 
 Then to run address.js and transaction.js
 
